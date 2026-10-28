@@ -33,3 +33,6 @@ dialog[open]{animation:viewer-enter 260ms ease both}
 .ribbon-group{flex-shrink:0}.ribbon-group img{flex-shrink:0}
 .opening-shade{background:linear-gradient(90deg,rgba(12,18,14,.62),rgba(12,18,14,.12)),linear-gradient(0deg,rgba(12,18,14,.58),transparent 45%)}
 @media(max-width:700px){#film-ribbon{top:25%}}
+
+#film-ribbon{transform:none;top:18%}
+@media(max-width:700px){#film-ribbon{top:22%}}
