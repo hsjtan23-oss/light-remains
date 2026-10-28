@@ -10,3 +10,14 @@
 .camera-card .mosaic-2 img:first-child{grid-row:1 / 3}
 .camera-card .caption{line-height:1.7}
 @media(max-width:700px){.camera-cards{grid-template-columns:1fr;gap:35px}.camera-mosaic{max-width:420px;aspect-ratio:auto}.mosaic-0{width:76%}.mosaic-2{aspect-ratio:1.2}.camera-card .caption{font-size:11px;max-width:420px}.camera-card .caption span:last-child{display:inline}.camera-card small{font-size:9px}.camera-card .camera-mosaic img{height:auto}}
+
+/* Quiet, consistent motion across navigation and the photo viewer. */
+#page{opacity:1;transition:opacity 220ms ease}
+#page.fading,#full-photo.fading{opacity:0}
+#full-photo{opacity:1;transition:opacity 220ms ease}
+dialog[open]{animation:viewer-enter 260ms ease both}
+@keyframes viewer-enter{from{opacity:0}to{opacity:1}}
+.sidebar a,.filters a,.arrow,#close{transition:color 180ms ease,opacity 180ms ease}
+.arrow:hover,#close:hover{color:var(--accent)}
+.photo-button img,.camera-mosaic{transition:opacity 240ms ease}
+@media(prefers-reduced-motion:reduce){#page,#full-photo{transition:none}dialog[open]{animation:none}}
