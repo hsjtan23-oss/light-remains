@@ -27,3 +27,9 @@ dialog[open]{animation:viewer-enter 260ms ease both}
 #immersive{margin-left:auto;background:none;border:0;padding:10px;color:inherit}.viewer-top{gap:18px}.viewer-top,.viewer-caption,.arrow{transition:opacity 350ms ease}dialog.immersive{background:#10120f;color:#e7e7dd}dialog.immersive #full-photo{max-width:96vw;max-height:94dvh}dialog.immersive .viewer-caption,dialog.immersive #photo-count{opacity:0;pointer-events:none}dialog.controls-asleep .viewer-top,dialog.controls-asleep .arrow{opacity:0}dialog.controls-asleep .viewer-top:focus-within,dialog.controls-asleep .arrow:focus-visible{opacity:1}
 @media(max-width:700px){.ribbon-group img{height:52dvh}#film-ribbon{top:18%;gap:12px}.ribbon-group{gap:12px}.opening-copy{left:8%}.opening-copy h1{font-size:48px}.opening-en{letter-spacing:4px}.opening-foot{left:8%;font-size:8px}.viewer-top{gap:8px}#immersive{font-size:10px}}
 @media(prefers-reduced-motion:reduce){#film-ribbon{animation:none}#opening,.viewer-top,.viewer-caption,.arrow{transition:none}}
+
+/* Anchor rotation to the viewport, not the center of the 92-photo strip. */
+#film-ribbon{transform-origin:left center;top:22%;animation-duration:720s}
+.ribbon-group{flex-shrink:0}.ribbon-group img{flex-shrink:0}
+.opening-shade{background:linear-gradient(90deg,rgba(12,18,14,.62),rgba(12,18,14,.12)),linear-gradient(0deg,rgba(12,18,14,.58),transparent 45%)}
+@media(max-width:700px){#film-ribbon{top:25%}}

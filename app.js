@@ -43,7 +43,7 @@ dialog.addEventListener('close',()=>{++photoTicket});
 
 function setupOpening(){
  const opening=document.querySelector('#opening');
- const group=photos.map(p=>`<img src="${p.thumb}" width="${p.width}" height="${p.height}" alt="" loading="lazy" decoding="async">`).join('');
+ const group=photos.map((p,i)=>`<img src="${p.thumb}" width="${p.width}" height="${p.height}" alt="" loading="${i<8?'eager':'lazy'}" decoding="async">`).join('');
  document.querySelector('#film-ribbon').innerHTML=`<div class="ribbon-group">${group}</div><div class="ribbon-group">${group}</div>`;
  if(!location.hash){opening.hidden=false;document.body.classList.add('opening-active');}
  document.querySelector('#enter-journal').onclick=()=>{opening.classList.add('leaving');document.body.classList.remove('opening-active');location.hash='home';setTimeout(()=>{opening.hidden=true;document.querySelector('#main').focus({preventScroll:true})},reducedMotion.matches?0:650)};
