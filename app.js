@@ -16,7 +16,7 @@ function updatePhoto(){const p=visiblePhotos[currentIndex];if(!p)return;const im
 function step(n){currentIndex=(currentIndex+n+visiblePhotos.length)%visiblePhotos.length;showPhoto()}
 page.addEventListener('click',e=>{const b=e.target.closest('[data-photo]');if(!b)return;currentIndex=visiblePhotos.findIndex(p=>p.id===b.dataset.photo);showPhoto();dialog.showModal();document.body.style.overflow='hidden'});
 document.querySelector('#close').onclick=()=>dialog.close();dialog.addEventListener('close',()=>document.body.style.overflow='');document.querySelector('#previous').onclick=()=>step(-1);document.querySelector('#next').onclick=()=>step(1);dialog.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();step(1)}if(e.key==='ArrowLeft'){e.preventDefault();step(-1)}});let touchX=0;dialog.addEventListener('touchstart',e=>touchX=e.changedTouches[0].clientX,{passive:true});dialog.addEventListener('touchend',e=>{const delta=e.changedTouches[0].clientX-touchX;if(Math.abs(delta)>65)step(delta<0?1:-1)},{passive:true});window.addEventListener('hashchange',transitionPage);document.querySelector('#year').textContent=new Date().getFullYear();
-fetch('photos.json').then(r=>{if(!r.ok)throw new Error('照片索引加载失败');return r.json()}).then(data=>{photos=data.filter(p=>p.public);document.querySelector('#camera-nav').innerHTML=cameras.map(c=>`<div class="camera-group"><a class="camera-link" href="${route(c)}">${c}</a><div class="film-list">${[...new Set(photos.filter(p=>p.camera===c).map(p=>p.film))].map(f=>`<a class="film-link" href="${route(c,f)}">${f}</a>`).join('')}</div></div>`).join('');render()}).catch(()=>page.innerHTML='<p class="error">照片暂时未能加载，请刷新页面重试。</p>');
+fetch('photos.json').then(r=>{if(!r.ok)throw new Error('照片索引加载失败');return r.json()}).then(data=>{photos=data.filter(p=>p.public);document.querySelector('#camera-nav').innerHTML=cameras.map(c=>`<div class="camera-group"><a class="camera-link" href="${route(c)}">${c}</a><div class="film-list">${[...new Set(photos.filter(p=>p.camera===c).map(p=>p.film))].map(f=>`<a class="film-link" href="${route(c,f)}">${f}</a>`).join('')}</div></div>`).join('');render();setupOpening()}).catch(()=>page.innerHTML='<p class="error">照片暂时未能加载，请刷新页面重试。</p>');
 
 document.querySelectorAll('a[href="#main"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector('#main').focus({preventScroll:true});window.scrollTo({top:0,behavior:'smooth'})}));
 
@@ -40,3 +40,19 @@ async function transitionPage(){
  requestAnimationFrame(()=>{if(ticket===pageTicket)page.classList.remove('fading')});
 }
 dialog.addEventListener('close',()=>{++photoTicket});
+
+function setupOpening(){
+ const opening=document.querySelector('#opening');
+ const group=photos.map(p=>`<img src="${p.thumb}" width="${p.width}" height="${p.height}" alt="" loading="lazy" decoding="async">`).join('');
+ document.querySelector('#film-ribbon').innerHTML=`<div class="ribbon-group">${group}</div><div class="ribbon-group">${group}</div>`;
+ if(!location.hash){opening.hidden=false;document.body.classList.add('opening-active');}
+ document.querySelector('#enter-journal').onclick=()=>{opening.classList.add('leaving');document.body.classList.remove('opening-active');location.hash='home';setTimeout(()=>{opening.hidden=true;document.querySelector('#main').focus({preventScroll:true})},reducedMotion.matches?0:650)};
+ document.querySelector('#pause-ribbon').onclick=e=>{const paused=opening.classList.toggle('paused');e.currentTarget.setAttribute('aria-pressed',paused);e.currentTarget.textContent=paused?'继续流动':'暂停流动'};
+ document.querySelector('.brand').insertAdjacentHTML('afterend','<button class="replay-opening">观看片头 ↗</button>');
+ document.querySelector('.replay-opening').onclick=()=>{opening.hidden=false;opening.classList.remove('leaving');document.body.classList.add('opening-active');document.querySelector('#enter-journal').focus()};
+}
+const immersiveButton=document.querySelector('#immersive');let controlsTimer;
+function wakeControls(){dialog.classList.remove('controls-asleep');clearTimeout(controlsTimer);if(dialog.classList.contains('immersive'))controlsTimer=setTimeout(()=>dialog.classList.add('controls-asleep'),2200)}
+immersiveButton.onclick=()=>{const enabled=dialog.classList.toggle('immersive');immersiveButton.setAttribute('aria-pressed',enabled);immersiveButton.textContent=enabled?'退出沉浸':'沉浸观影';wakeControls()};
+dialog.addEventListener('pointermove',wakeControls);dialog.addEventListener('pointerdown',wakeControls);dialog.addEventListener('keydown',wakeControls);dialog.addEventListener('focusin',wakeControls);
+dialog.addEventListener('close',()=>{clearTimeout(controlsTimer);dialog.classList.remove('controls-asleep','immersive');immersiveButton.setAttribute('aria-pressed','false');immersiveButton.textContent='沉浸观影'});
